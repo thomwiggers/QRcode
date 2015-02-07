@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{hyperref}
+
+\DeclareGraphicsExtensions{.pdf,.eps,.png}
+
+\begin{document}
+\begin{center}
+\huge GPG Key thom@thomwiggers.nl
+\end{center}
+
+\section{Image1}
+\includegraphics[keepaspectratio,width=\textwidth]{test}
+
+\begin{verbatim}
+pub   4096R/4871E82F 2014-01-19 [expires: 2014-12-31]
+      Key fingerprint = C313 856D 66DA 0DDD DC5C  6203 915D 4ED3 4871 E82F
+uid                  Thom Wiggers <thom@thomwiggers.nl>
+uid                  Thom Wiggers (Alternate address) <thom@rded.nl>
+uid                  [jpeg image of size 5009]
+sub   4096R/7E9E280E 2014-01-19 [expires: 2014-12-31]
+\end{verbatim}
+
+\section{Image2}
+\includegraphics[keepaspectratio,width=\textwidth]{test2}
+
+Produced by 
+\begin{verbatim}
+gpg --export-secret-key thom@thomwiggers.nl | paperkey --output-type raw \
+  | base64 > tmp
+split -n 2 tmp IMAGE
+for f in IMAGE*; cat $f | qrencode -o $f.png
+\end{verbatim}
+
+Import scanned images:
+\begin{verbatim}
+zbar – raw IMAGEa.png | head -c -1 > PART1 # head to cut off last \n
+zbar – raw IMAGEb.png | head -c -1 > PART2
+cat PART1 PART2 | base64 -d | paperkey – pubring ~/.gnupg/pubring.gpg \
+ | gpg – import
+\end{verbatim}
+
+\end{document}
